@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="LibraryManagementModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="tbBook">
+    <Key>
+      <PropertyRef Name="Book_ID" />
+    </Key>
+    <Property Name="Book_ID" Type="Int32" Nullable="false" />
+    <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Author" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="BookName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Fee" Type="Double" />
+    <Property Name="Type" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="AmountOfBook" Type="Int32" />
+    <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="tbBorrowedBooks" Relationship="Self.FK_tbBorrowedBooks_tbBook" FromRole="tbBook" ToRole="tbBorrowedBooks" />
+  </EntityType>
+  <EntityType Name="tbBorrowedBook">
+    <Key>
+      <PropertyRef Name="Borrow_ID" />
+      <PropertyRef Name="User_ID" />
+      <PropertyRef Name="Book_ID" />
+    </Key>
+    <Property Name="Borrow_ID" Type="Int32" Nullable="false" />
+    <Property Name="User_ID" Type="Int32" Nullable="false" />
+    <Property Name="Book_ID" Type="Int32" Nullable="false" />
+    <Property Name="Borrow_date" Type="DateTime" Precision="0" />
+    <Property Name="Return_date" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="tbBook" Relationship="Self.FK_tbBorrowedBooks_tbBook" FromRole="tbBorrowedBooks" ToRole="tbBook" />
+    <NavigationProperty Name="tbUser" Relationship="Self.FK_tbBorrowedBooks_tbUser" FromRole="tbBorrowedBooks" ToRole="tbUser" />
+  </EntityType>
+  <EntityType Name="tbUser">
+    <Key>
+      <PropertyRef Name="User_ID" />
+    </Key>
+    <Property Name="User_ID" Type="Int32" Nullable="false" />
+    <Property Name="UserName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="PassWord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Role" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="Phone" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="DateOfBirth" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="tbBorrowedBooks" Relationship="Self.FK_tbBorrowedBooks_tbUser" FromRole="tbUser" ToRole="tbBorrowedBooks" />
+  </EntityType>
+  <Association Name="FK_tbBorrowedBooks_tbBook">
+    <End Role="tbBook" Type="Self.tbBook" Multiplicity="1" />
+    <End Role="tbBorrowedBooks" Type="Self.tbBorrowedBook" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tbBook">
+        <PropertyRef Name="Book_ID" />
+      </Principal>
+      <Dependent Role="tbBorrowedBooks">
+        <PropertyRef Name="Book_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_tbBorrowedBooks_tbUser">
+    <End Role="tbUser" Type="Self.tbUser" Multiplicity="1" />
+    <End Role="tbBorrowedBooks" Type="Self.tbBorrowedBook" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tbUser">
+        <PropertyRef Name="User_ID" />
+      </Principal>
+      <Dependent Role="tbBorrowedBooks">
+        <PropertyRef Name="User_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="LibraryManagementEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <EntitySet Name="tbBooks" EntityType="Self.tbBook" />
+    <EntitySet Name="tbBorrowedBooks" EntityType="Self.tbBorrowedBook" />
+    <EntitySet Name="tbUsers" EntityType="Self.tbUser" />
+    <AssociationSet Name="FK_tbBorrowedBooks_tbBook" Association="Self.FK_tbBorrowedBooks_tbBook">
+      <End Role="tbBook" EntitySet="tbBooks" />
+      <End Role="tbBorrowedBooks" EntitySet="tbBorrowedBooks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_tbBorrowedBooks_tbUser" Association="Self.FK_tbBorrowedBooks_tbUser">
+      <End Role="tbUser" EntitySet="tbUsers" />
+      <End Role="tbBorrowedBooks" EntitySet="tbBorrowedBooks" />
+    </AssociationSet>
+    <EntitySet Name="BookStats" EntityType="LibraryManagementModel.BookStat" />
+  </EntityContainer>
+  <EntityType Name="BookStat">
+    <Key>
+      <PropertyRef Name="Book_ID" />
+    </Key>
+    <Property Name="Book_ID" Type="Int32" Nullable="false" />
+    <Property Name="BorrowedCount" Type="Int32" />
+    <Property Name="ReturnedCount" Type="Int32" />
+  </EntityType>
+</Schema>
